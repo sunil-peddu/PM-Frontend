@@ -5,6 +5,9 @@ import toast from "react-hot-toast";
 import { URL } from "../../url";
 import { useAuth } from "../AuthProvider/AuthProvider";
 import { Dialog, DialogContent, TextField } from "@mui/material";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+
 function Organization() {
   const { token } = useAuth();
   const [organizations, setOrganizations] = useState([]);
@@ -200,6 +203,47 @@ function Organization() {
       color: "#000000",
     },
   };
+
+  //export data
+  const exportOrganizationsToExcel = () => {
+    if (!organizations.length) {
+      toast.error("No organizations available to export");
+      return;
+    }
+
+    // Format data for excel
+    const formattedData = organizations.map((org) => ({
+      Name: org.name,
+      Address: org.address,
+      "Admin Email": org.admin_email,
+      "Contact Number": org.contact_number,
+      Users: org.user_count,
+      Status: org.is_active ? "Active" : "Inactive",
+      Created: new Date(org.created_at).toLocaleDateString(),
+    }));
+
+    // Create worksheet
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+
+    // Create workbook
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Organizations");
+
+    // Generate excel buffer
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+
+    // Create blob
+    const data = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
+    });
+
+    // Download file
+    saveAs(data, "organizations.xlsx");
+  };
   return (
     <>
       <main className="w-full h-full flex flex-col gap-3 min-h-0">
@@ -230,7 +274,9 @@ function Organization() {
               <Plus size={16} />
               Create Organization
             </button>
-            <button className="button_n">Import Data</button>
+            <button onClick={exportOrganizationsToExcel} className="button_n ">
+              Export Data
+            </button>
           </div>
         </header>
         {/* Popup */}
