@@ -12,6 +12,10 @@ import Dashboard from "./components/SuperAdmin/Dashboard";
 import Organization from "./components/SuperAdmin/Organization";
 import AuditLogs from "./components/SuperAdmin/AuditLogs";
 import ProtectedRoute from "./components/Pages/ProtectedRoute";
+import AdminDashboard from "./components/Admin/Dashboard";
+import AdminProjects from "./components/Admin/Projects";
+import AdminTeam from "./components/Admin/Team";
+import AdminAuditLogs from "./components/Admin/AuditLogs";
 function App() {
   return (
     <>
@@ -41,7 +45,13 @@ function App() {
                   <Admin />
                 </ProtectedRoute>
               }
-            />
+            >
+              <Route index element={<AdminDashboard />} />
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="projects" element={<AdminProjects />} />
+              <Route path="team" element={<AdminTeam />} />
+              <Route path="logs" element={<AdminAuditLogs/>}/>
+            </Route>
             <Route
               path="/manager"
               element={
