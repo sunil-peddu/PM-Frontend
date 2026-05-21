@@ -114,7 +114,7 @@ function Admin() {
       </nav>
 
       {/* Right Side */}
-      <section className="flex-1 flex flex-col gap-2">
+      <section className="flex-1 min-h-0 flex flex-col gap-2">
         {/* Top Navbar */}
         <div className="h-16 rounded-lg border border-white/90 bg-blue-50/80 backdrop-blur-lg px-4 flex items-center justify-end">
           <div className="flex items-center gap-4">
@@ -143,7 +143,7 @@ function Admin() {
         </div>
 
         {/* Content */}
-        <div className="flex-1 p-2">
+        <div className="flex-1 min-h-0 overflow-hidden p-2">
           <Outlet />
         </div>
       </section>
