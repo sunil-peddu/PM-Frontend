@@ -10,12 +10,32 @@ function CreateTeamMember({ open, setOpen, selectedRole, getUsers }) {
   const { token } = useAuth();
 
   const [createLoading, setCreateLoading] = useState(false);
+
   const [showPassword, setShowPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
     password: "",
   });
+
+  // Reset Form
+  const resetForm = () => {
+    setFormData({
+      full_name: "",
+      email: "",
+      password: "",
+    });
+
+    // Added (2)
+    setShowPassword(false);
+  };
+
+  // Close Dialog
+  const handleClose = () => {
+    resetForm();
+    setOpen(false);
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -25,6 +45,21 @@ function CreateTeamMember({ open, setOpen, selectedRole, getUsers }) {
   };
 
   const handleSubmit = async () => {
+    // Added (3)
+    if (createLoading) return;
+
+    // Added (1)
+    if (!formData.full_name || !formData.email || !formData.password) {
+      toast.error("All fields are required");
+      return;
+    }
+
+    // Added (5)
+    if (formData.password.length < 8) {
+      toast.error("Password must be at least 8 characters");
+      return;
+    }
+
     try {
       setCreateLoading(true);
 
@@ -32,7 +67,7 @@ function CreateTeamMember({ open, setOpen, selectedRole, getUsers }) {
         full_name: formData.full_name,
         email: formData.email,
         password: formData.password,
-        role: selectedRole, // manager or user
+        role: selectedRole,
       };
 
       const response = await axios.post(`${URL}/users/`, payload, {
@@ -44,13 +79,7 @@ function CreateTeamMember({ open, setOpen, selectedRole, getUsers }) {
 
       toast.success(response?.data?.message || "User created successfully");
 
-      setOpen(false);
-
-      setFormData({
-        full_name: "",
-        email: "",
-        password: "",
-      });
+      handleClose();
 
       getUsers();
     } catch (error) {
@@ -84,16 +113,17 @@ function CreateTeamMember({ open, setOpen, selectedRole, getUsers }) {
       color: "#000000",
     },
   };
+
   return (
-    <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogContent className="p-0!">
         {/* Header */}
-        <div className="flex justify-between items-center p-4 ">
+        <div className="flex justify-between items-center p-4">
           <p className="text-sm font-semibold">
             Create {selectedRole === "manager" ? "Manager" : "Employee"}
           </p>
 
-          <button onClick={() => setOpen(false)} className="cursor-pointer">
+          <button onClick={handleClose} className="cursor-pointer">
             <X size={16} />
           </button>
         </div>
@@ -148,7 +178,7 @@ function CreateTeamMember({ open, setOpen, selectedRole, getUsers }) {
 
         {/* Footer */}
         <div className="flex justify-end gap-3 p-4 border-t border-gray-100">
-          <button onClick={() => setOpen(false)} className="form_button_n">
+          <button onClick={handleClose} className="form_button_n">
             Cancel
           </button>
 
