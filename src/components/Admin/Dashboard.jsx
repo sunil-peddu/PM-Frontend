@@ -17,6 +17,7 @@ import { Link } from "react-router-dom";
 import { URL } from "../../url";
 import { useAuth } from "../AuthProvider/AuthProvider";
 import CreateTeamMember from "./CreateTeamMember";
+import AssignProjectDashboard from "./AssignProjectDashboard";
 function Dashboard() {
   const { token } = useAuth();
   const hasFetched = useRef(false);
@@ -25,6 +26,7 @@ function Dashboard() {
   // store full response
   const [dashboardData, setDashboardData] = useState(null);
   const [open, setOpen] = useState(false);
+  const [assignProjectOpen, setAssignProjectOpen] = useState(false);
 
   const [selectedRole, setSelectedRole] = useState("manager");
 
@@ -429,10 +431,13 @@ function Dashboard() {
                 </span>
               </button>
 
-              <button className="flex items-center justify-center gap-2 rounded-md border border-gray-100 bg-blue-50 p-3 transition hover:bg-blue-100">
+              <button
+                onClick={() => setAssignProjectOpen(true)}
+                className="flex items-center justify-center gap-2 rounded-md border border-gray-100 bg-blue-50 p-3 transition hover:bg-blue-100"
+              >
                 <BriefcaseBusiness className=" text-blue-400" size={20} />
                 <p className="text-sm font-medium text-gray-800">
-                  Assign Manager
+                  Assign to Project
                 </p>
               </button>
 
@@ -448,6 +453,10 @@ function Dashboard() {
           setOpen={setOpen}
           selectedRole={selectedRole}
           getUsers={getDashboardData}
+        />
+        <AssignProjectDashboard
+          open={assignProjectOpen}
+          setOpen={setAssignProjectOpen}
         />
       </main>
     </>
