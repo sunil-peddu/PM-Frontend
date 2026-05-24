@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, TextField } from "@mui/material";
 import { X, Eye, EyeOff } from "lucide-react";
 import axios from "axios";
@@ -6,7 +6,14 @@ import toast from "react-hot-toast";
 import { URL } from "../../url";
 import { useAuth } from "../AuthProvider/AuthProvider";
 
-function CreateTeamMember({ open, setOpen, selectedRole, getUsers }) {
+function CreateTeamMember({
+  open,
+  setOpen,
+  selectedRole,
+  getUsers,
+  editUser,
+  isEdit,
+}) {
   const { token } = useAuth();
 
   const [createLoading, setCreateLoading] = useState(false);
@@ -45,45 +52,76 @@ function CreateTeamMember({ open, setOpen, selectedRole, getUsers }) {
   };
 
   const handleSubmit = async () => {
-    // Added (3)
     if (createLoading) return;
 
-    // Added (1)
-    if (!formData.full_name || !formData.email || !formData.password) {
-      toast.error("All fields are required");
+    if (!formData.full_name || !formData.email) {
+      toast.error("Full name and email are required");
       return;
     }
 
-    // Added (5)
-    if (formData.password.length < 8) {
-      toast.error("Password must be at least 8 characters");
-      return;
+    // Create validation only
+    if (!isEdit) {
+      if (!formData.password) {
+        toast.error("Password is required");
+        return;
+      }
+
+      if (formData.password.length < 8) {
+        toast.error("Password must be at least 8 characters");
+        return;
+      }
     }
 
     try {
       setCreateLoading(true);
 
-      const payload = {
-        full_name: formData.full_name,
-        email: formData.email,
-        password: formData.password,
-        role: selectedRole,
-      };
+      let response;
 
-      const response = await axios.post(`${URL}/users/`, payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-        },
-      });
+      // UPDATE USER
+      if (isEdit) {
+        const payload = {
+          full_name: formData.full_name,
+          email: formData.email,
+        };
 
-      toast.success(response?.data?.message || "User created successfully");
+        response = await axios.put(`${URL}/users/${editUser.id}`, payload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        });
+      }
+
+      // CREATE USER
+      else {
+        const payload = {
+          full_name: formData.full_name,
+          email: formData.email,
+          password: formData.password,
+          role: selectedRole,
+        };
+
+        response = await axios.post(`${URL}/users/`, payload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        });
+      }
+
+      toast.success(
+        response?.data?.message ||
+          (isEdit ? "User updated successfully" : "User created successfully"),
+      );
 
       handleClose();
 
       getUsers();
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to create user");
+      toast.error(
+        error?.response?.data?.message ||
+          (isEdit ? "Failed to update user" : "Failed to create user"),
+      );
     } finally {
       setCreateLoading(false);
     }
@@ -113,14 +151,26 @@ function CreateTeamMember({ open, setOpen, selectedRole, getUsers }) {
       color: "#000000",
     },
   };
-
+  useEffect(() => {
+    if (isEdit && editUser) {
+      setFormData({
+        full_name: editUser.full_name || "",
+        email: editUser.email || "",
+        password: "",
+      });
+    } else {
+      resetForm();
+    }
+  }, [editUser, isEdit, open]);
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogContent className="p-0!">
         {/* Header */}
         <div className="flex justify-between items-center p-4">
           <p className="text-sm font-semibold">
-            Create {selectedRole === "manager" ? "Manager" : "Employee"}
+            {isEdit
+              ? "Edit User"
+              : `Create ${selectedRole === "manager" ? "Manager" : "Employee"}`}
           </p>
 
           <button onClick={handleClose} className="cursor-pointer">
@@ -152,28 +202,29 @@ function CreateTeamMember({ open, setOpen, selectedRole, getUsers }) {
             required
             sx={textFieldStyle}
           />
+          {!isEdit && (
+            <div className="relative">
+              <TextField
+                fullWidth
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                variant="outlined"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                sx={textFieldStyle}
+              />
 
-          <div className="relative">
-            <TextField
-              fullWidth
-              label="Password"
-              type={showPassword ? "text" : "password"}
-              variant="outlined"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              sx={textFieldStyle}
-            />
-
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
-          </div>
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
@@ -187,7 +238,13 @@ function CreateTeamMember({ open, setOpen, selectedRole, getUsers }) {
             disabled={createLoading}
             className="form_button_bg"
           >
-            {createLoading ? "Creating..." : "Create"}
+            {createLoading
+              ? isEdit
+                ? "Updating..."
+                : "Creating..."
+              : isEdit
+                ? "Update"
+                : "Create"}
           </button>
         </div>
       </DialogContent>

@@ -26,14 +26,16 @@ function Tooltip({ children, text, position = "top" }) {
       {children}
 
       {show && (
-        <div className={`absolute z-50 ${positions[position]}`}>
+        <div
+          className={`absolute z-50 ${positions[position]} max-w-55`}
+        >
           {/* Tooltip */}
-          <div className="relative rounded-xl bg-[#38a0f5] px-2 py-1 text-sm font-semibold text-white shadow-xl whitespace-nowrap">
+          <div className="relative rounded-xl bg-[#38a0f5] px-3 py-2 text-sm font-semibold text-white shadow-xl whitespace-normal wrap-break-words">
             {text}
 
             {/* Tip */}
             <div
-              className={`absolute h-3 w-3 rotate-45 rounded-[2px] bg-[#38a0f5] ${tipPositions[position]}`}
+              className={`absolute h-3 w-3 rotate-45 rounded-xs bg-[#38a0f5] ${tipPositions[position]}`}
             />
           </div>
         </div>
