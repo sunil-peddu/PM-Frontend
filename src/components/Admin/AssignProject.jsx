@@ -6,12 +6,7 @@ import toast from "react-hot-toast";
 import { URL } from "../../url";
 import { useAuth } from "../AuthProvider/AuthProvider";
 
-function AssignProject({
-  open,
-  setOpen,
-  project,
-  mode = "add",
-}) {
+function AssignProject({ open, setOpen, project, mode = "add" }) {
   const { token } = useAuth();
 
   const [users, setUsers] = useState([]);
@@ -34,41 +29,34 @@ function AssignProject({
     try {
       setLoading(true);
 
-      const [usersResponse, membersResponse] =
-        await Promise.all([
-          axios.get(`${URL}/users/`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              Accept: "application/json",
-            },
-          }),
+      const [usersResponse, membersResponse] = await Promise.all([
+        axios.get(`${URL}/users/`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        }),
 
-          axios.get(
-            `${URL}/projects/${project.id}/members`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                Accept: "application/json",
-              },
-            },
-          ),
-        ]);
+        axios.get(`${URL}/projects/${project.id}/members`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        }),
+      ]);
 
       const allUsers = usersResponse.data.data || [];
 
       const members = membersResponse.data.data || [];
 
       // Existing member ids
-      const existingMemberIds = members.map(
-        (member) => member.user_id,
-      );
+      const existingMemberIds = members.map((member) => member.user_id);
 
       // ADD MODE
       if (mode === "add") {
         const filteredUsers = allUsers.filter(
           (user) =>
-            user.role !== "admin" &&
-            !existingMemberIds.includes(user.id),
+            user.role !== "admin" && !existingMemberIds.includes(user.id),
         );
 
         setUsers(filteredUsers);
@@ -79,10 +67,7 @@ function AssignProject({
         setUsers(members);
       }
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to fetch users",
-      );
+      toast.error(error?.response?.data?.message || "Failed to fetch users");
     } finally {
       setLoading(false);
     }
@@ -94,6 +79,12 @@ function AssignProject({
     }
   }, [open, project]);
 
+  // ================= User Filters =================
+  const filteredManagers = users.filter(
+    (user) => user.role === "manager" || user.role === "admin",
+  );
+
+  const filteredEmployees = users.filter((user) => user.role === "user");
   // ================= Submit =================
   const handleSubmit = async () => {
     if (!selectedUser) {
@@ -144,10 +135,7 @@ function AssignProject({
 
       handleClose();
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-          "Something went wrong",
-      );
+      toast.error(error?.response?.data?.message || "Something went wrong");
     } finally {
       setAssignLoading(false);
     }
@@ -166,9 +154,7 @@ function AssignProject({
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5">
               <p className="text-lg font-medium">
-                {mode === "add"
-                  ? "Assign to project"
-                  : "Remove from project"}
+                {mode === "add" ? "Assign to project" : "Remove from project"}
               </p>
 
               <button
@@ -183,9 +169,7 @@ function AssignProject({
             <div className="p-6">
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium text-gray-700">
-                  {mode === "add"
-                    ? "Select User"
-                    : "Select Member"}
+                  {mode === "add" ? "Select User" : "Select Member"}
                 </label>
 
                 {/* Custom Dropdown */}
@@ -193,25 +177,17 @@ function AssignProject({
                   {/* Selected */}
                   <button
                     type="button"
-                    onClick={() =>
-                      setDropdownOpen(!dropdownOpen)
-                    }
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
                     className="h-12 w-full rounded-2xl bg-gray-100 border border-gray-200 px-4 text-sm outline-none transition flex items-center justify-between hover:bg-gray-200"
                   >
                     <span
-                      className={
-                        selectedUser
-                          ? "text-black"
-                          : "text-gray-400"
-                      }
+                      className={selectedUser ? "text-black" : "text-gray-400"}
                     >
                       {selectedUser
                         ? users.find((u) =>
                             mode === "add"
-                              ? u.id ===
-                                Number(selectedUser)
-                              : u.user_id ===
-                                Number(selectedUser),
+                              ? u.id === Number(selectedUser)
+                              : u.user_id === Number(selectedUser),
                           )?.full_name
                         : loading
                           ? "Loading..."
@@ -223,54 +199,83 @@ function AssignProject({
                     <ChevronDown
                       size={16}
                       className={`transition-transform duration-200 ${
-                        dropdownOpen
-                          ? "rotate-180"
-                          : ""
+                        dropdownOpen ? "rotate-180" : ""
                       }`}
                     />
                   </button>
 
                   {/* Dropdown */}
+                  {/* Dropdown */}
                   {dropdownOpen && (
-                    <div className="absolute z-50 mt-2 w-full rounded-2xl bg-white border border-gray-200 shadow-lg overflow-hidden">
-                      <div className="max-h-60 overflow-auto py-2">
-                        {users.map((user) => (
-                          <button
-                            key={
-                              mode === "add"
-                                ? user.id
-                                : user.user_id
-                            }
-                            type="button"
-                            onClick={() => {
-                              setSelectedUser(
-                                mode === "add"
-                                  ? user.id
-                                  : user.user_id,
-                              );
+                    <div className="absolute z-50 mt-2 w-full overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg">
+                      <div className="max-h-72 overflow-auto">
+                        {/* Managers */}
+                        <div className="border-b border-gray-100 bg-gray-50 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                          Managers
+                        </div>
 
-                              setDropdownOpen(false);
-                            }}
-                            className="w-full px-4 py-3 text-left hover:bg-gray-100 transition flex flex-col"
-                          >
-                            <span className="text-sm font-medium text-black">
-                              {user.full_name}
-                            </span>
+                        {filteredManagers.length > 0 ? (
+                          filteredManagers.map((user) => (
+                            <button
+                              key={mode === "add" ? user.id : user.user_id}
+                              type="button"
+                              onClick={() => {
+                                setSelectedUser(
+                                  mode === "add" ? user.id : user.user_id,
+                                );
 
-                            <span className="text-xs text-gray-500">
-                              {user.email}
-                            </span>
-                          </button>
-                        ))}
+                                setDropdownOpen(false);
+                              }}
+                              className="w-full px-4 py-3 text-left transition hover:bg-gray-100 flex flex-col"
+                            >
+                              <span className="text-sm font-medium text-black">
+                                {user.full_name}
+                              </span>
 
-                        {users.length === 0 &&
-                          !loading && (
-                            <p className="px-4 py-3 text-sm text-gray-500">
-                              {mode === "add"
-                                ? "No users available"
-                                : "No members found"}
-                            </p>
-                          )}
+                              <span className="text-xs text-gray-500">
+                                {user.email}
+                              </span>
+                            </button>
+                          ))
+                        ) : (
+                          <p className="px-4 py-3 text-sm text-gray-500">
+                            No managers available
+                          </p>
+                        )}
+
+                        {/* Employees */}
+                        <div className="border-y border-gray-100 bg-gray-50 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                          Employees
+                        </div>
+
+                        {filteredEmployees.length > 0 ? (
+                          filteredEmployees.map((user) => (
+                            <button
+                              key={mode === "add" ? user.id : user.user_id}
+                              type="button"
+                              onClick={() => {
+                                setSelectedUser(
+                                  mode === "add" ? user.id : user.user_id,
+                                );
+
+                                setDropdownOpen(false);
+                              }}
+                              className="w-full px-4 py-3 text-left transition hover:bg-gray-100 flex flex-col"
+                            >
+                              <span className="text-sm font-medium text-black">
+                                {user.full_name}
+                              </span>
+
+                              <span className="text-xs text-gray-500">
+                                {user.email}
+                              </span>
+                            </button>
+                          ))
+                        ) : (
+                          <p className="px-4 py-3 text-sm text-gray-500">
+                            No employees available
+                          </p>
+                        )}
                       </div>
                     </div>
                   )}
