@@ -16,6 +16,9 @@ import AdminDashboard from "./components/Admin/Dashboard";
 import AdminProjects from "./components/Admin/Projects";
 import AdminTeam from "./components/Admin/Team";
 import AdminAuditLogs from "./components/Admin/AuditLogs";
+import ManagerDashboard from "./components/Manager/Dashboard";
+import ManagerProjects from "./components/Manager/Projects";
+import ManagerAuditLogs from "./components/Manager/AuditLogs";
 function App() {
   return (
     <>
@@ -50,7 +53,7 @@ function App() {
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="projects" element={<AdminProjects />} />
               <Route path="team" element={<AdminTeam />} />
-              <Route path="logs" element={<AdminAuditLogs/>}/>
+              <Route path="logs" element={<AdminAuditLogs />} />
             </Route>
             <Route
               path="/manager"
@@ -59,7 +62,12 @@ function App() {
                   <Manager />
                 </ProtectedRoute>
               }
-            />
+            >
+              <Route index element={<ManagerDashboard />} />
+              <Route path="dashboard" element={<ManagerDashboard />} />
+              <Route path="projects" element={<ManagerProjects />} />
+              <Route path="logs" element={<ManagerAuditLogs />} />
+            </Route>
             <Route
               path="/employee"
               element={
