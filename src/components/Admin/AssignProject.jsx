@@ -80,11 +80,15 @@ function AssignProject({ open, setOpen, project, mode = "add" }) {
   }, [open, project]);
 
   // ================= User Filters =================
-  const filteredManagers = users.filter(
-    (user) => user.role === "manager" || user.role === "admin",
+  const filteredManagers = users.filter((user) =>
+    mode === "add"
+      ? user.role === "manager" || user.role === "admin"
+      : user.role_in_project === "manager",
   );
 
-  const filteredEmployees = users.filter((user) => user.role === "user");
+  const filteredEmployees = users.filter((user) =>
+    mode === "add" ? user.role === "user" : user.role_in_project === "user",
+  );
   // ================= Submit =================
   const handleSubmit = async () => {
     if (!selectedUser) {
