@@ -19,6 +19,7 @@ import AdminAuditLogs from "./components/Admin/AuditLogs";
 import ManagerDashboard from "./components/Manager/Dashboard";
 import ManagerProjects from "./components/Manager/Projects";
 import ManagerAuditLogs from "./components/Manager/AuditLogs";
+import ProjectDetails from "./components/Manager/ProjectDetails";
 function App() {
   return (
     <>
@@ -67,6 +68,7 @@ function App() {
               <Route path="dashboard" element={<ManagerDashboard />} />
               <Route path="projects" element={<ManagerProjects />} />
               <Route path="logs" element={<ManagerAuditLogs />} />
+              <Route path="projects/:id" element={<ProjectDetails />} />
             </Route>
             <Route
               path="/employee"
