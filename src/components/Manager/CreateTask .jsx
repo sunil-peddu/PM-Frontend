@@ -6,7 +6,14 @@ import toast from "react-hot-toast";
 import { URL } from "../../url";
 import { useAuth } from "../AuthProvider/AuthProvider";
 
-function CreateTask({ open, setOpen, projectId, refreshTasks }) {
+function CreateTask({
+  open,
+  setOpen,
+  projectId,
+  refreshTasks,
+  mode = "create",
+  editTask = null,
+}) {
   const { token } = useAuth();
 
   const [users, setUsers] = useState([]);
@@ -77,7 +84,7 @@ function CreateTask({ open, setOpen, projectId, refreshTasks }) {
 
   // ================= CREATE TASK =================
   const handleSubmit = async () => {
-    if (!formData.title || !formData.due_date || !formData.assigned_to) {
+    if (!formData.title || !formData.due_date) {
       toast.error("Please fill all required fields");
       return;
     }
@@ -85,25 +92,59 @@ function CreateTask({ open, setOpen, projectId, refreshTasks }) {
     try {
       setCreateLoading(true);
 
-      const response = await axios.post(
-        `${URL}/tasks/`,
-        {
-          title: formData.title,
-          description: formData.description,
-          priority: formData.priority,
-          due_date: formData.due_date,
-          assigned_to: Number(formData.assigned_to),
-          project_id: Number(projectId),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
-        },
-      );
+      let response;
 
-      toast.success(response?.data?.message || "Task created successfully");
+      // ================= CREATE =================
+      if (mode === "create") {
+        if (!formData.assigned_to) {
+          toast.error("Please assign user");
+          return;
+        }
+
+        response = await axios.post(
+          `${URL}/tasks/`,
+          {
+            title: formData.title,
+            description: formData.description,
+            priority: formData.priority,
+            due_date: formData.due_date,
+            assigned_to: Number(formData.assigned_to),
+            project_id: Number(projectId),
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: "application/json",
+            },
+          },
+        );
+      }
+
+      // ================= EDIT =================
+      else {
+        response = await axios.put(
+          `${URL}/tasks/${editTask.id}`,
+          {
+            title: formData.title,
+            description: formData.description,
+            priority: formData.priority,
+            due_date: formData.due_date,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: "application/json",
+            },
+          },
+        );
+      }
+
+      toast.success(
+        response?.data?.message ||
+          (mode === "edit"
+            ? "Task updated successfully"
+            : "Task created successfully"),
+      );
 
       handleClose();
 
@@ -111,12 +152,26 @@ function CreateTask({ open, setOpen, projectId, refreshTasks }) {
         refreshTasks();
       }
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to create task");
+      toast.error(
+        error?.response?.data?.message ||
+          (mode === "edit" ? "Failed to update task" : "Failed to create task"),
+      );
     } finally {
       setCreateLoading(false);
     }
   };
 
+  useEffect(() => {
+    if (mode === "edit" && editTask) {
+      setFormData({
+        title: editTask.title || "",
+        description: editTask.description || "",
+        priority: editTask.priority || "medium",
+        due_date: editTask.due_date || "",
+        assigned_to: editTask.assigned_to || "",
+      });
+    }
+  }, [mode, editTask]);
   if (!open) return null;
 
   return (
@@ -129,8 +184,9 @@ function CreateTask({ open, setOpen, projectId, refreshTasks }) {
           <div className="rounded-[28px] bg-[#f7f7f7]/80 backdrop-blur-xl">
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5">
-              <p className="text-lg font-medium">Create Task</p>
-
+              <p className="text-lg font-medium">
+                {mode === "edit" ? "Edit Task" : "Create Task"}
+              </p>
               <button
                 onClick={handleClose}
                 className="h-9 w-9 flex items-center justify-center rounded-full hover:bg-white/60 transition"
@@ -156,83 +212,86 @@ function CreateTask({ open, setOpen, projectId, refreshTasks }) {
                   className="h-12 rounded-2xl bg-gray-100 border border-gray-200 px-4 text-sm outline-none"
                 />
               </div>
+
               {/* Assign User */}
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Assign To
-                </label>
+              {mode === "create" && (
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Assign To
+                  </label>
 
-                <div className="relative">
-                  {/* Selected */}
-                  <button
-                    type="button"
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className="h-12 w-full rounded-2xl bg-gray-100 border border-gray-200 px-4 text-sm outline-none transition flex items-center justify-between hover:bg-gray-200"
-                  >
-                    <span
-                      className={
-                        formData.assigned_to ? "text-black" : "text-gray-400"
-                      }
+                  <div className="relative">
+                    {/* Selected */}
+                    <button
+                      type="button"
+                      onClick={() => setDropdownOpen(!dropdownOpen)}
+                      className="h-12 w-full rounded-2xl bg-gray-100 border border-gray-200 px-4 text-sm outline-none transition flex items-center justify-between hover:bg-gray-200"
                     >
-                      {formData.assigned_to
-                        ? users.find(
-                            (u) => u.user_id === Number(formData.assigned_to),
-                          )?.full_name
-                        : loading
-                          ? "Loading..."
-                          : "Select member"}
-                    </span>
+                      <span
+                        className={
+                          formData.assigned_to ? "text-black" : "text-gray-400"
+                        }
+                      >
+                        {formData.assigned_to
+                          ? users.find(
+                              (u) => u.user_id === Number(formData.assigned_to),
+                            )?.full_name
+                          : loading
+                            ? "Loading..."
+                            : "Select member"}
+                      </span>
 
-                    <ChevronDown
-                      size={16}
-                      className={`transition-transform duration-200 ${
-                        dropdownOpen ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
+                      <ChevronDown
+                        size={16}
+                        className={`transition-transform duration-200 ${
+                          dropdownOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
 
-                  {/* Dropdown */}
-                  {dropdownOpen && (
-                    <div className="absolute left-0 top-full z-9999 mt-2 w-full overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl">
-                      <div className="max-h-60 overflow-y-auto">
-                        {users.filter((user) => user.role_in_project === "user")
-                          .length > 0 ? (
-                          users
-                            .filter((user) => user.role_in_project === "user")
-                            .map((user) => (
-                              <button
-                                key={user.user_id}
-                                type="button"
-                                onClick={() => {
-                                  setFormData((prev) => ({
-                                    ...prev,
-                                    assigned_to: user.user_id,
-                                  }));
+                    {/* Dropdown */}
+                    {dropdownOpen && (
+                      <div className="absolute left-0 top-full z-9999 mt-2 w-full overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl">
+                        <div className="max-h-60 overflow-y-auto">
+                          {users.filter(
+                            (user) => user.role_in_project === "user",
+                          ).length > 0 ? (
+                            users
+                              .filter((user) => user.role_in_project === "user")
+                              .map((user) => (
+                                <button
+                                  key={user.user_id}
+                                  type="button"
+                                  onClick={() => {
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      assigned_to: user.user_id,
+                                    }));
 
-                                  setDropdownOpen(false);
-                                }}
-                                className="w-full px-4 py-3 text-left transition hover:bg-gray-100 flex flex-col border-b border-gray-100 last:border-b-0"
-                              >
-                                <span className="text-sm font-medium text-black">
-                                  {user.full_name}
-                                </span>
+                                    setDropdownOpen(false);
+                                  }}
+                                  className="w-full px-4 py-3 text-left transition hover:bg-gray-100 flex flex-col border-b border-gray-100 last:border-b-0"
+                                >
+                                  <span className="text-sm font-medium text-black">
+                                    {user.full_name}
+                                  </span>
 
-                                <span className="text-xs text-gray-500">
-                                  {user.email}
-                                </span>
-                              </button>
-                            ))
-                        ) : (
-                          <p className="px-4 py-3 text-sm text-gray-500">
-                            No users found
-                          </p>
-                        )}
+                                  <span className="text-xs text-gray-500">
+                                    {user.email}
+                                  </span>
+                                </button>
+                              ))
+                          ) : (
+                            <p className="px-4 py-3 text-sm text-gray-500">
+                              No users found
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
-
+              )}
               {/* Description */}
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium text-gray-700">
@@ -359,7 +418,13 @@ function CreateTask({ open, setOpen, projectId, refreshTasks }) {
               disabled={createLoading}
               className="h-9 px-5 rounded-2xl bg-black text-white text-sm font-medium hover:opacity-90 transition disabled:opacity-50 cursor-pointer"
             >
-              {createLoading ? "Creating..." : "Create"}
+              {createLoading
+                ? mode === "edit"
+                  ? "Updating..."
+                  : "Creating..."
+                : mode === "edit"
+                  ? "Update"
+                  : "Create"}
             </button>
           </div>
         </div>

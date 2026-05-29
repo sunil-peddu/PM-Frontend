@@ -21,7 +21,7 @@ function ProtectedRoute({ children, allowedRoles }) {
       case "manager":
         return <Navigate to="/manager" replace />;
 
-      case "employee":
+      case "user":
         return <Navigate to="/employee" replace />;
 
       default:
