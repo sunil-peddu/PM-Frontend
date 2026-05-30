@@ -103,7 +103,7 @@ function Manager() {
               {/* Profile Button */}
               <button
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                className="flex items-center gap-2 hover:bg-gray-100 rounded-full p-1 pr-2 transition cursor-pointer"
+                className="flex items-center gap-2 hover:bg-gray-100 rounded-full p-1 pr-10 transition cursor-pointer"
               >
                 <div className="bg-gray-100 p-1 rounded-full">
                   <img
