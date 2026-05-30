@@ -20,6 +20,9 @@ import ManagerDashboard from "./components/Manager/Dashboard";
 import ManagerProjects from "./components/Manager/Projects";
 import ManagerAuditLogs from "./components/Manager/AuditLogs";
 import ProjectDetails from "./components/Manager/ProjectDetails";
+import EmployeeDashboard from "./components/Employee/Dashboard";
+import EmployeeProjects from "./components/Employee/Projects";
+import EmployeeProjectDetails from "./components/Employee/ProjectDetails";
 function App() {
   return (
     <>
@@ -77,7 +80,12 @@ function App() {
                   <User />
                 </ProtectedRoute>
               }
-            />
+            >
+              <Route index element={<EmployeeDashboard/>}/>
+              <Route path="dashboard" element={<EmployeeDashboard />} />
+              <Route path="projects" element= {<EmployeeProjects/>}/>
+              <Route path="projects/:id" element={<EmployeeProjectDetails/>}/>
+            </Route>
           </Routes>
         </AuthProvider>
       </BrowserRouter>
