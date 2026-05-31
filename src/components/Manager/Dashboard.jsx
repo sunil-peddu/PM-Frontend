@@ -253,37 +253,37 @@ function Dashboard() {
                     {/* Stats */}
                     <div className="grid grid-cols-3 gap-2 mt-2">
                       {/* Active */}
-                      <div className="bg-yellow-50 rounded-xl p-2 text-center">
+                      <div className="bg-yellow-50 rounded-xl p-1 text-center">
                         <p className="text-base font-bold text-yellow-700">
-                          {member.active_tasks}
+                          {member.total_active_tasks}
                         </p>
 
                         <p className="text-xs text-yellow-600">Active</p>
                       </div>
 
                       {/* Completed */}
-                      <div className="bg-green-50 rounded-xl p-2 text-center">
+                      <div className="bg-green-50 rounded-xl p-1 text-center">
                         <p className="text-base font-bold text-green-700">
-                          {member.completed_tasks}
+                          {member.total_completed_tasks}
                         </p>
 
                         <p className="text-xs text-green-600">Completed</p>
                       </div>
 
                       {/* Overdue */}
-                      <div className="bg-red-50 rounded-xl p-2 text-center">
+                      <div className="bg-red-50 rounded-xl p-1 text-center">
                         <p className="text-base font-bold text-red-700">
-                          {member.overdue_tasks}
+                          {member.total_overdue_tasks}
                         </p>
 
                         <p className="text-xs text-red-600">Overdue</p>
                       </div>
                     </div>
 
-                    {/* Project */}
-                    <div className="mt-2 flex items-center gap-2 text-xs text-gray-500">
+                    {/* Projects */}
+                    <div className="mt-2 flex items-start gap-2 text-xs text-gray-500">
                       <CircleCheckBig size={14} />
-                      <span>{member.project_name}</span>
+                      <span>{member.projects?.join(", ")}</span>
                     </div>
                   </div>
                 ))

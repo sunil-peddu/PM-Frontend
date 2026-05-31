@@ -281,7 +281,7 @@ function Dashboard() {
       <div className="grid grid-cols-3 gap-4 flex-1 overflow-hidden">
         <div className="border border-white/50 bg-white/50 backdrop-blur-lg rounded-xl overflow-y-auto p-4">
           <h2 className="text-lg font-semibold pb-2">Recently Completed</h2>
-          <div className="space-y3">
+          <div className="space-y-3">
             {dashboard?.recently_completed?.length > 0 ? (
               dashboard.recently_completed.map((task) => (
                 <div

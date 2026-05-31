@@ -1,15 +1,26 @@
-import { Plus, SquarePen, Eye, UserPlus, UserMinus } from "lucide-react";
+import {
+  Plus,
+  SquarePen,
+  Eye,
+  UserPlus,
+  UserMinus,
+  ListTodo,
+  CheckCircle2,
+  TrendingUp,
+  RefreshCw,
+} from "lucide-react";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Tooltip from "../Common/Tooltip";
 import axios from "axios";
 import toast from "react-hot-toast";
-
+import { Fragment } from "react";
 import { URL } from "../../url";
 import { useAuth } from "../AuthProvider/AuthProvider";
 
 import CreateProject from "./CreateProject";
 import AssignProject from "./AssignProject";
+import UpdateProjectStatus from "./UpdateProjectStatus";
 function Projects() {
   const { token } = useAuth();
 
@@ -20,12 +31,14 @@ function Projects() {
 
   const [open, setOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-
+  const [expandedProject, setExpandedProject] = useState(null);
+  const [projectDetails, setProjectDetails] = useState({});
   const [selectedProject, setSelectedProject] = useState(null);
   const [assignOpen, setAssignOpen] = useState(false);
   const [selectedAssignProject, setSelectedAssignProject] = useState(null);
   const [removeOpen, setRemoveOpen] = useState(false);
   const [selectedRemoveProject, setSelectedRemoveProject] = useState(null);
+  const [statusOpen, setStatusOpen] = useState(false);
 
   const hasFetched = useRef(false);
 
@@ -82,6 +95,28 @@ function Projects() {
         part
       ),
     );
+  };
+
+  const getProjectDetails = async (projectId) => {
+    try {
+      const response = await axios.get(`${URL}/projects/${projectId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+
+      setProjectDetails((prev) => ({
+        ...prev,
+        [projectId]: response.data.data,
+      }));
+
+      setExpandedProject(expandedProject === projectId ? null : projectId);
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message || "Failed to fetch project details",
+      );
+    }
   };
 
   return (
@@ -154,96 +189,201 @@ function Projects() {
                   </tr>
                 ) : filteredProjects.length > 0 ? (
                   filteredProjects.map((project) => (
-                    <tr
-                      key={project.id}
-                      className="border-b border-gray-100 hover:bg-gray-50"
-                    >
-                      {/* Project Name */}
-                      <td className="py-3 px-3">
-                        <p className="font-medium text-gray-800">
-                          {highlightText(project.name, searchTerm)}
-                        </p>
-                      </td>
+                    <Fragment key={project.id}>
+                      <tr className="border-b border-gray-100 hover:bg-gray-50">
+                        {/* Project Name */}
+                        <td className="py-3 px-3">
+                          <p className="font-medium text-gray-800">
+                            {highlightText(project.name, searchTerm)}
+                          </p>
+                        </td>
 
-                      {/* Description */}
-                      <td className="py-3 px-3 text-gray-600 max-w-md">
-                        <p className="line-clamp-2">{project.description}</p>
-                      </td>
+                        {/* Description */}
+                        <td className="py-3 px-3 text-gray-600 max-w-md">
+                          <p className="line-clamp-2">{project.description}</p>
+                        </td>
 
-                      {/* Status */}
-                      <td className="py-3 px-3">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
-                            project.status === "active"
-                              ? "bg-green-50 text-green-600"
-                              : project.status === "completed"
-                                ? "bg-blue-50 text-blue-600"
-                                : "bg-yellow-50 text-yellow-600"
-                          }`}
-                        >
-                          {project.status}
-                        </span>
-                      </td>
+                        {/* Status */}
+                        <td className="py-3 px-3">
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
+                              project.status === "active"
+                                ? "bg-green-50 text-green-600"
+                                : project.status === "completed"
+                                  ? "bg-blue-50 text-blue-600"
+                                  : "bg-yellow-50 text-yellow-600"
+                            }`}
+                          >
+                            {project.status}
+                          </span>
+                        </td>
 
-                      {/* Due Date */}
-                      <td className="py-3 px-3 text-gray-500 whitespace-nowrap">
-                        {new Date(project.due_date).toLocaleDateString()}
-                      </td>
+                        {/* Due Date */}
+                        <td className="py-3 px-3 text-gray-500 whitespace-nowrap">
+                          {new Date(project.due_date).toLocaleDateString()}
+                        </td>
 
-                      {/* Actions */}
+                        {/* Actions */}
 
-                      <td className="py-3 px-3">
-                        <div className="flex items-center justify-start gap-3">
-                          {/* Edit */}
-                          <Tooltip text="Edit">
-                            <button
-                              onClick={() => {
-                                setSelectedProject(project);
+                        <td className="py-3 px-3">
+                          <div className="flex items-center justify-start gap-3">
+                            {/* Edit */}
+                            <Tooltip text="Edit">
+                              <button
+                                onClick={() => {
+                                  setSelectedProject(project);
 
-                                setIsEdit(true);
+                                  setIsEdit(true);
 
-                                setOpen(true);
-                              }}
-                              className="cursor-pointer text-blue-600 hover:text-blue-700 transition"
-                            >
-                              <SquarePen size={16} />
-                            </button>
-                          </Tooltip>
-                          {/* Assign */}
-                          {/* Assign */}
-                          <Tooltip text="Assign to project">
-                            <button
-                              onClick={() => {
-                                setSelectedAssignProject(project);
-                                setAssignOpen(true);
-                              }}
-                              className="cursor-pointer text-green-600 hover:text-green-700 transition"
-                            >
-                              <UserPlus size={16} />
-                            </button>
-                          </Tooltip>
+                                  setOpen(true);
+                                }}
+                                className="cursor-pointer text-blue-600 hover:text-blue-700 transition"
+                              >
+                                <SquarePen size={16} />
+                              </button>
+                            </Tooltip>
+                            <Tooltip text="Update Status">
+                              <button
+                                onClick={() => {
+                                  setSelectedProject(project);
+                                  setStatusOpen(true);
+                                }}
+                                className="cursor-pointer text-orange-600 hover:text-orange-700 transition"
+                              >
+                                <RefreshCw size={16} />
+                              </button>
+                            </Tooltip>
+                            {/* Assign */}
+                            {/* Assign */}
+                            <Tooltip text="Assign to project">
+                              <button
+                                onClick={() => {
+                                  setSelectedAssignProject(project);
+                                  setAssignOpen(true);
+                                }}
+                                className="cursor-pointer text-green-600 hover:text-green-700 transition"
+                              >
+                                <UserPlus size={16} />
+                              </button>
+                            </Tooltip>
 
-                          {/* Remove */}
-                          <Tooltip text="Remove from project">
-                            <button
-                              onClick={() => {
-                                setSelectedRemoveProject(project);
-                                setRemoveOpen(true);
-                              }}
-                              className="cursor-pointer text-red-600 hover:text-red-700 transition"
-                            >
-                              <UserMinus size={16} />
-                            </button>
-                          </Tooltip>
-                          {/* View */}
-                          <Tooltip text="View Project">
-                            <button className="cursor-pointer text-gray-600 hover:text-black transition">
-                              <Eye size={16} />
-                            </button>
-                          </Tooltip>
-                        </div>
-                      </td>
-                    </tr>
+                            {/* Remove */}
+                            <Tooltip text="Remove from project">
+                              <button
+                                onClick={() => {
+                                  setSelectedRemoveProject(project);
+                                  setRemoveOpen(true);
+                                }}
+                                className="cursor-pointer text-red-600 hover:text-red-700 transition"
+                              >
+                                <UserMinus size={16} />
+                              </button>
+                            </Tooltip>
+                            {/* View */}
+                            <Tooltip text="View Project">
+                              <button
+                                onClick={() => getProjectDetails(project.id)}
+                                className="cursor-pointer text-gray-600 hover:text-black transition"
+                              >
+                                <Eye size={16} />
+                              </button>
+                            </Tooltip>
+                          </div>
+                        </td>
+                      </tr>
+                      {expandedProject === project.id && (
+                        <tr>
+                          <td colSpan="5" className="bg-gray-50 px-6 py-5">
+                            {projectDetails[project.id] && (
+                              <div className="grid grid-cols-3 gap-4">
+                                {/* Total Tasks */}
+                                <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-center gap-3">
+                                  <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                    <ListTodo
+                                      size={18}
+                                      className="text-blue-600"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <p className="text-xs text-gray-500">
+                                      Total Tasks
+                                    </p>
+
+                                    <p className="text-xl font-semibold text-blue-700">
+                                      {
+                                        projectDetails[project.id].progress
+                                          .total_tasks
+                                      }
+                                    </p>
+                                  </div>
+                                </div>
+
+                                {/* Completed Tasks */}
+                                <div className="bg-green-50 border border-green-100 rounded-xl p-4 flex items-center gap-3">
+                                  <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                                    <CheckCircle2
+                                      size={18}
+                                      className="text-green-600"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <p className="text-xs text-gray-500">
+                                      Completed
+                                    </p>
+
+                                    <p className="text-xl font-semibold text-green-700">
+                                      {
+                                        projectDetails[project.id].progress
+                                          .completed_tasks
+                                      }
+                                    </p>
+                                  </div>
+                                </div>
+
+                                {/* Progress */}
+                                {/* Progress */}
+                                <div className="bg-violet-50 border border-violet-100 rounded-xl p-4">
+                                  <div className="flex items-center gap-3 mb-3">
+                                    <div className="h-10 w-10 rounded-full bg-violet-100 flex items-center justify-center">
+                                      <TrendingUp
+                                        size={18}
+                                        className="text-violet-600"
+                                      />
+                                    </div>
+
+                                    <div>
+                                      <p className="text-xs text-gray-500">
+                                        Progress
+                                      </p>
+
+                                      <p className="text-xl font-semibold text-violet-700">
+                                        {
+                                          projectDetails[project.id].progress
+                                            .percentage
+                                        }
+                                        %
+                                      </p>
+                                    </div>
+                                  </div>
+
+                                  {/* Progress Bar */}
+                                  <div className="w-full h-2 bg-violet-100 rounded-full overflow-hidden">
+                                    <div
+                                      className="h-full bg-violet-600 transition-all duration-500"
+                                      style={{
+                                        width: `${projectDetails[project.id].progress.percentage}%`,
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      )}
+                    </Fragment>
                   ))
                 ) : (
                   <tr>
@@ -276,6 +416,12 @@ function Projects() {
           setOpen={setRemoveOpen}
           project={selectedRemoveProject}
           mode="remove"
+        />
+        <UpdateProjectStatus
+          open={statusOpen}
+          setOpen={setStatusOpen}
+          project={selectedProject}
+          getProjects={getProjects}
         />
       </main>
     </>

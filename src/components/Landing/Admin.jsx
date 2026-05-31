@@ -9,14 +9,16 @@ import {
   UsersRound,
   Bell,
   Power,
-  Info
+  Info,
 } from "lucide-react";
-
+import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../AuthProvider/AuthProvider";
-
+import NotificationModal from "../Common/NotificationsModal";
+import ProfileModal from "../Common/ProfileModal";
 function Admin() {
-  const { user, logout,token } = useAuth();
+  const { user, logout, token } = useAuth();
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const navItems = [
     {
@@ -119,12 +121,15 @@ function Admin() {
         <div className="h-16 rounded-lg border border-white/90 bg-blue-50/80 backdrop-blur-lg px-4 flex items-center justify-end">
           <div className="flex items-center gap-4">
             {/* Notification */}
-            <button className="bg-white p-2 rounded-full shadow-sm">
+            {/* <button className="bg-white p-2 rounded-full shadow-sm">
               <Bell size={18} className="text-gray-500" />
-            </button>
-
+            </button> */}
+            <NotificationModal />
             {/* Profile */}
-            <div className="flex items-center gap-2 ">
+            <div
+              onClick={() => setProfileOpen(true)}
+              className="flex items-center gap-2 cursor-pointer hover:bg-white/50 rounded-full p-2 transition-all"
+            >
               <img
                 src={DefaultAvatar}
                 alt="avatar"
@@ -147,6 +152,7 @@ function Admin() {
           <Outlet />
         </div>
       </section>
+      <ProfileModal open={profileOpen} setOpen={setProfileOpen} />
     </main>
   );
 }

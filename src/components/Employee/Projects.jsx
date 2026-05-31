@@ -37,14 +37,14 @@ function Projects() {
 
   return (
     <main className="w-full h-full flex flex-col gap-4 min-h-0 overflow-hidden">
-      <section className="bg-white rounded-xl shadow-sm p-4 flex-1 overflow-y-auto">
+      <section className="border border-white/50 bg-white/50 backdrop-blur-lg rounded-xl overflow-y-auto p-4 flex-1">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {projects.length > 0 ? (
             projects.map((project) => (
               <div
                 key={project.id}
                 onClick={() => navigate(`/employee/projects/${project.id}`)}
-                className="border border-gray-200 rounded-xl p-4 space-y-4 cursor-pointer hover:shadow-md transition-all"
+                className="bg-white  rounded-2xl shadow-sm p-4 space-y-4 cursor-pointer hover:shadow-md transition-all"
               >
                 {/* Top */}
                 <div className="flex items-start justify-between">
@@ -80,24 +80,24 @@ function Projects() {
 
                 {/* Bottom */}
                 <div className="grid grid-cols-3 gap-3 text-sm">
-                  <div className="bg-gray-50 rounded-lg p-2 text-center">
-                    <p className="text-gray-500">Total Tasks</p>
+                  <div className="bg-yellow-50 rounded-lg p-2 text-center">
+                    <p className="text-gray-600">Total Tasks</p>
 
                     <p className="font-semibold">
                       {project.progress.total_tasks}
                     </p>
                   </div>
 
-                  <div className="bg-gray-50 rounded-lg p-2 text-center">
-                    <p className="text-gray-500">Completed</p>
+                  <div className="bg-green-50 rounded-lg p-2 text-center">
+                    <p className="text-gray-600">Completed</p>
 
                     <p className="font-semibold">
                       {project.progress.completed_tasks}
                     </p>
                   </div>
 
-                  <div className="bg-gray-50 rounded-lg p-2 text-center">
-                    <p className="text-gray-500">Due Date</p>
+                  <div className="bg-red-50 rounded-lg p-2 text-center">
+                    <p className="text-gray-600">Due Date</p>
 
                     <p className="font-semibold">{project.due_date}</p>
                   </div>

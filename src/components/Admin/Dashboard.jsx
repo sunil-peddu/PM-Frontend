@@ -13,7 +13,7 @@ import {
   Download,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-
+import CreateProject from "./CreateProject";
 import { URL } from "../../url";
 import { useAuth } from "../AuthProvider/AuthProvider";
 import CreateTeamMember from "./CreateTeamMember";
@@ -27,7 +27,7 @@ function Dashboard() {
   const [dashboardData, setDashboardData] = useState(null);
   const [open, setOpen] = useState(false);
   const [assignProjectOpen, setAssignProjectOpen] = useState(false);
-
+  const [projectOpen, setProjectOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState("manager");
 
   const getDashboardData = async () => {
@@ -398,7 +398,10 @@ function Dashboard() {
             <p className="text-base font-medium text-gray-800">Quick Actions</p>
 
             <div className="mt-3 grid grid-cols-3 gap-3">
-              <button className="flex items-center justify-center gap-2 rounded-md border border-gray-100 bg-blue-50 p-3 transition hover:bg-blue-100">
+              <button
+                onClick={() => setProjectOpen(true)}
+                className="flex items-center justify-center gap-2 rounded-md border border-gray-100 bg-blue-50 p-3 transition hover:bg-blue-100 cursor-pointer"
+              >
                 <FolderPlus className=" text-blue-400 " size={20} />
                 <p className="text-sm font-medium text-gray-800">
                   Create Project
@@ -457,6 +460,11 @@ function Dashboard() {
         <AssignProjectDashboard
           open={assignProjectOpen}
           setOpen={setAssignProjectOpen}
+        />
+        <CreateProject
+          open={projectOpen}
+          setOpen={setProjectOpen}
+          getProjects={getDashboardData}
         />
       </main>
     </>
