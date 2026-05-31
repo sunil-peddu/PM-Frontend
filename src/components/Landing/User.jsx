@@ -8,7 +8,7 @@ import ProfileModal from "../Common/ProfileModal";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { URL } from "../../url";
-
+import NotificationsDropdown from "../Common/NotificationsModal";
 function Employee() {
   const { user, logout, token } = useAuth();
 
@@ -94,9 +94,10 @@ function Employee() {
           {/* Notification + Profile */}
           <div className="flex items-center gap-4">
             {/* Notification */}
-            <button className="hover:bg-white/70 p-2 hover:rounded-full">
+            {/* <button className="hover:bg-white/70 p-2 hover:rounded-full">
               <Bell size={18} className="text-gray-500" />
-            </button>
+            </button> */}
+            <NotificationsDropdown />
 
             {/* Profile */}
             <div className="relative" ref={dropdownRef}>

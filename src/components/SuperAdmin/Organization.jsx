@@ -1,4 +1,21 @@
-import { Plus, X, SquarePen, Power } from "lucide-react";
+import {
+  Plus,
+  X,
+  SquarePen,
+  Power,
+  Eye,
+  Building2,
+  Mail,
+  Phone,
+  MapPin,
+  Users,
+  FolderKanban,
+  ListTodo,
+  CheckCircle2,
+  Clock3,
+  AlertTriangle,
+  ShieldCheck,
+} from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -23,6 +40,9 @@ function Organization() {
     contact_number: "",
     admin_email: "",
   });
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [organizationDetails, setOrganizationDetails] = useState(null);
+  const [detailsLoading, setDetailsLoading] = useState(false);
   //organization api
   const getOrganizations = async () => {
     try {
@@ -202,6 +222,29 @@ function Organization() {
     "& .MuiInputLabel-root.Mui-focused": {
       color: "#000000",
     },
+  };
+
+  const getOrganizationDetails = async (orgId) => {
+    try {
+      setDetailsLoading(true);
+
+      const response = await axios.get(`${URL}/organizations/${orgId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+
+      setOrganizationDetails(response.data.data);
+      setDetailsOpen(true);
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ||
+          "Failed to fetch organization details",
+      );
+    } finally {
+      setDetailsLoading(false);
+    }
   };
 
   //export data
@@ -461,6 +504,12 @@ function Organization() {
                           >
                             <Power size={16} />
                           </button>
+                          <button
+                            onClick={() => getOrganizationDetails(org.id)}
+                            className="cursor-pointer text-violet-600 hover:text-violet-700"
+                          >
+                            <Eye size={16} />
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -477,6 +526,214 @@ function Organization() {
           </div>
         </section>
       </main>
+      <>
+        {/* Overlay */}
+        <div
+          className={`fixed inset-0 z-[9998] transition-all duration-300 ${
+            detailsOpen
+              ? "opacity-100 visible"
+              : "opacity-0 invisible pointer-events-none"
+          }`}
+        >
+          <div
+            className="absolute inset-0 bg-black/15 backdrop-blur-[2px]"
+            onClick={() => setDetailsOpen(false)}
+          />
+        </div>
+
+        {/* Drawer */}
+        <div
+          className={`fixed top-0 right-0 h-screen w-[520px] z-[9999]
+      transform transition-transform duration-300 ease-in-out
+      ${detailsOpen ? "translate-x-0" : "translate-x-full"}
+    `}
+        >
+          <div
+            className="
+        h-full
+        overflow-y-auto
+        bg-white/85
+        backdrop-blur-xl
+        border-l
+        border-white/50
+        shadow-[0_0_50px_rgba(0,0,0,0.15)]
+      "
+          >
+            {/* Header */}
+            <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-gray-200 px-6 py-5 flex justify-between items-center">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">
+                  Organization Details
+                </h2>
+
+                <p className="text-sm text-gray-500">
+                  Organization overview and statistics
+                </p>
+              </div>
+
+              <button
+                onClick={() => setDetailsOpen(false)}
+                className="p-2 rounded-full hover:bg-gray-100 transition-all"
+              >
+                <X size={18} className="text-gray-700" />
+              </button>
+            </div>
+
+            {detailsLoading ? (
+              <div className="h-[300px] flex items-center justify-center text-gray-500">
+                Loading...
+              </div>
+            ) : organizationDetails ? (
+              <div className="p-5 space-y-5">
+                {/* Organization Card */}
+                <div className="rounded-3xl bg-white/70 backdrop-blur-md border border-gray-200 p-5 shadow-sm">
+                  <div className="flex items-center gap-4 mb-5">
+                    <div className="h-14 w-14 rounded-2xl bg-violet-100 flex items-center justify-center">
+                      <Building2 size={24} className="text-violet-600" />
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {organizationDetails.org.name}
+                      </h3>
+
+                      <p className="text-sm text-gray-500">
+                        Organization Profile
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 text-sm text-gray-700">
+                    <div className="flex gap-3 items-center">
+                      <Mail size={16} className="text-gray-400" />
+                      <span>{organizationDetails.org.admin_email}</span>
+                    </div>
+
+                    <div className="flex gap-3 items-center">
+                      <Phone size={16} className="text-gray-400" />
+                      <span>{organizationDetails.org.contact_number}</span>
+                    </div>
+
+                    <div className="flex gap-3 items-center">
+                      <MapPin size={16} className="text-gray-400" />
+                      <span>{organizationDetails.org.address}</span>
+                    </div>
+
+                    <div className="flex gap-3 items-center">
+                      <ShieldCheck size={16} className="text-gray-400" />
+                      <span>
+                        {organizationDetails.org.is_active
+                          ? "Active"
+                          : "Inactive"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="rounded-2xl bg-blue-50 border border-blue-100 p-4">
+                    <Users size={22} className="text-blue-600 mb-2" />
+
+                    <p className="text-xs text-gray-500">Total Users</p>
+
+                    <p className="text-3xl font-bold text-blue-700">
+                      {organizationDetails.users_summary.total_users}
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl bg-emerald-50 border border-emerald-100 p-4">
+                    <FolderKanban size={22} className="text-emerald-600 mb-2" />
+
+                    <p className="text-xs text-gray-500">Projects</p>
+
+                    <p className="text-3xl font-bold text-emerald-700">
+                      {organizationDetails.projects_summary.total_projects}
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl bg-amber-50 border border-amber-100 p-4">
+                    <ListTodo size={22} className="text-amber-600 mb-2" />
+
+                    <p className="text-xs text-gray-500">Tasks</p>
+
+                    <p className="text-3xl font-bold text-amber-700">
+                      {organizationDetails.tasks_summary.total_tasks}
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl bg-violet-50 border border-violet-100 p-4">
+                    <ShieldCheck size={22} className="text-violet-600 mb-2" />
+
+                    <p className="text-xs text-gray-500">Managers</p>
+
+                    <p className="text-3xl font-bold text-violet-700">
+                      {organizationDetails.users_summary.total_managers}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Task Summary */}
+                <div className="rounded-3xl bg-white/70 backdrop-blur-md border border-gray-200 p-5 shadow-sm">
+                  <h3 className="font-semibold text-gray-900 mb-4">
+                    Task Summary
+                  </h3>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex items-center gap-3 p-4 rounded-xl bg-gray-50">
+                      <Clock3 size={18} className="text-gray-500" />
+
+                      <div>
+                        <p className="text-xs text-gray-500">Todo</p>
+
+                        <p className="font-semibold text-gray-900">
+                          {organizationDetails.tasks_summary.todo_tasks}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 p-4 rounded-xl bg-blue-50">
+                      <ListTodo size={18} className="text-blue-600" />
+
+                      <div>
+                        <p className="text-xs text-gray-500">In Progress</p>
+
+                        <p className="font-semibold text-gray-900">
+                          {organizationDetails.tasks_summary.in_progress_tasks}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 p-4 rounded-xl bg-green-50">
+                      <CheckCircle2 size={18} className="text-green-600" />
+
+                      <div>
+                        <p className="text-xs text-gray-500">Done</p>
+
+                        <p className="font-semibold text-gray-900">
+                          {organizationDetails.tasks_summary.done_tasks}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50">
+                      <AlertTriangle size={18} className="text-red-600" />
+
+                      <div>
+                        <p className="text-xs text-gray-500">Overdue</p>
+
+                        <p className="font-semibold text-gray-900">
+                          {organizationDetails.tasks_summary.overdue_tasks}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      </>
     </>
   );
 }

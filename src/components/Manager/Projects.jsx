@@ -94,7 +94,7 @@ function Projects() {
 
                 {/* Bottom */}
                 <div className="grid grid-cols-3 gap-3 text-sm">
-                  <div className="bg-gray-50 rounded-lg p-2 text-center">
+                  <div className="bg-yellow-50 rounded-lg p-2 text-center">
                     <p className="text-gray-500">
                       Total Tasks
                     </p>
@@ -104,7 +104,7 @@ function Projects() {
                     </p>
                   </div>
 
-                  <div className="bg-gray-50 rounded-lg p-2 text-center">
+                  <div className="bg-green-50 rounded-lg p-2 text-center">
                     <p className="text-gray-500">
                       Completed
                     </p>
@@ -114,7 +114,7 @@ function Projects() {
                     </p>
                   </div>
 
-                  <div className="bg-gray-50 rounded-lg p-2 text-center">
+                  <div className="bg-red-50 rounded-lg p-2 text-center">
                     <p className="text-gray-500">
                       Due Date
                     </p>

@@ -8,6 +8,7 @@ import ProfileModal from "../Common/ProfileModal";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { URL } from "../../url";
+import NotificationModal from "../Common/NotificationsModal";
 
 function Manager() {
   const { user, logout, token } = useAuth();
@@ -94,9 +95,8 @@ function Manager() {
           </div>
           <div className="flex items-center gap-4">
             {/* Notification */}
-            <button className="bg-gray-100 p-2 rounded-full shadow-sm">
-              <Bell size={18} className="text-gray-500" />
-            </button>
+          
+              <NotificationModal />
 
             {/* Profile */}
             <div className="relative" ref={dropdownRef}>

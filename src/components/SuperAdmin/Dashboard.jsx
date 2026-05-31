@@ -167,9 +167,11 @@ function Dashboard() {
                     data={pieData}
                     cx="50%"
                     cy="50%"
-                    outerRadius={70}
+                    innerRadius={55}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    cornerRadius={8}
                     dataKey="value"
-                    label
                   >
                     {pieData.map((entry, index) => (
                       <Cell
@@ -178,6 +180,21 @@ function Dashboard() {
                       />
                     ))}
                   </Pie>
+
+                  <text
+                    x="50%"
+                    y="50%"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                  >
+                    <tspan x="50%" dy="-5" className="fill-gray-800">
+                      {dashboardData?.stats?.total_orgs || 0}
+                    </tspan>
+
+                    <tspan x="50%" dy="18" className="fill-gray-500">
+                      Total
+                    </tspan>
+                  </text>
 
                   <Tooltip />
                 </PieChart>

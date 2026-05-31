@@ -125,7 +125,7 @@ function ProjectDetails() {
   }, []);
 
   const TaskCard = ({ task }) => (
-    <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
+    <div className="bg-white/85 border-white/70 rounded-2xl p-3 shadow-sm  mb-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
       {/* Top */}
       <div className="flex items-start justify-between">
         <div className="flex gap-2 flex-wrap">
@@ -141,19 +141,6 @@ function ProjectDetails() {
           >
             {task.priority}
           </span>
-
-          <span
-            className={`px-3 py-1 rounded-full text-xs font-medium capitalize
-          ${
-            task.status === "done"
-              ? "bg-green-100 text-green-700"
-              : task.status === "in_progress"
-                ? "bg-blue-100 text-blue-700"
-                : "bg-gray-100 text-gray-700"
-          }`}
-          >
-            {task.status.replace("_", " ")}
-          </span>
         </div>
 
         {task.is_overdue && (
@@ -165,7 +152,7 @@ function ProjectDetails() {
       </div>
 
       {/* Title */}
-      <h3 className="font-semibold text-gray-800 mt-4">{task.title}</h3>
+      <h3 className="font-semibold text-gray-800 mt-2">{task.title}</h3>
 
       {/* Description */}
       <p className="text-sm text-gray-500 mt-2 line-clamp-3">
@@ -173,20 +160,15 @@ function ProjectDetails() {
       </p>
 
       {/* Details */}
-      <div className="mt-4 space-y-2">
+      <div className="mt-2 space-y-2">
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <CalendarDays size={14} />
           <span>{task.due_date}</span>
         </div>
-
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <User2 size={14} />
-          <span>{task.assigned_user_name}</span>
-        </div>
       </div>
 
       {/* Actions */}
-      <div className="flex justify-end gap-4 mt-4 pt-3 border-t border-gray-100">
+      <div className="flex justify-end gap-4 mt-2 pt-3 border-t border-gray-300/50">
         <Tooltip text="Comments">
           <button
             onClick={() => {
@@ -230,7 +212,7 @@ function ProjectDetails() {
         </p>
       </div>
 
-      <section className="bg-white rounded-xl shadow-sm p-4 flex-1 overflow-y-auto">
+      <section className="bg-white/50 border border-white/50  rounded-xl shadow-sm p-4 flex-1 overflow-y-auto">
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-full">
             <Droppable droppableId="todo">
@@ -238,16 +220,16 @@ function ProjectDetails() {
                 <div
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  className="bg-purple-50 rounded-3xl p-4 "
+                  className="bg-rose-500/15 border-rose-300/30 rounded-3xl p-4 shadow-[0_0_30px_rgba(217,70,239,0.15)]"
                 >
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full bg-purple-500" />
+                      <div className="h-3 w-3 rounded-full bg-fuchsia-500" />
 
                       <h2 className="font-semibold text-lg">Todo</h2>
                     </div>
 
-                    <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-medium">
+                    <span className="bg-fuchsia-100 text-fuchsia-700 px-3 py-1 rounded-full text-xs font-medium">
                       {todoTasks.length}
                     </span>
                   </div>
@@ -283,16 +265,16 @@ function ProjectDetails() {
                 <div
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  className="bg-amber-50 rounded-3xl p-4 "
+                  className="bg-indigo-500/15 border-indigo-300/30 rounded-3xl p-4 shadow-[0_0_30px_rgba(59,130,246,0.15)]"
                 >
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full bg-amber-500" />
+                      <div className="h-3 w-3 rounded-full bg-sky-500" />
 
                       <h2 className="font-semibold text-lg">In Progress</h2>
                     </div>
 
-                    <span className="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-medium">
+                    <span className="bg-sky-100 text-sky-700 px-3 py-1 rounded-full text-xs font-medium">
                       {inProgressTasks.length}
                     </span>
                   </div>
@@ -328,16 +310,16 @@ function ProjectDetails() {
                 <div
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  className="bg-green-50 rounded-3xl p-4 "
+                  className="bg-emerald-500/15 border-emerald-300/30 rounded-3xl p-4 shadow-[0_0_30px_rgba(16,185,129,0.15)]"
                 >
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full bg-green-500" />
+                      <div className="h-3 w-3 rounded-full bg-emerald-500" />
 
                       <h2 className="font-semibold text-lg">Done</h2>
                     </div>
 
-                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">
+                    <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-medium">
                       {doneTasks.length}
                     </span>
                   </div>
