@@ -69,6 +69,35 @@ function Dashboard() {
   ];
 
   const COLORS = ["#22c55e", "#ef4444"];
+  const BAR_COLORS = [
+    "#287af7",
+    "#34d399",
+    "#f59e0b",
+    "#ef4444",
+    "#8b5cf6",
+    "#06b6d4",
+  ];
+
+  const CustomXAxisTick = (props) => {
+    const { x, y, payload } = props;
+
+    const colorIndex = orgChartData.findIndex(
+      (item) => item.name === payload.value,
+    );
+
+    return (
+      <text
+        x={x}
+        y={y + 15}
+        textAnchor="middle"
+        fill={BAR_COLORS[colorIndex % BAR_COLORS.length]}
+        fontSize={12}
+        fontWeight={500}
+      >
+        {payload.value}
+      </text>
+    );
+  };
   return (
     <>
       <main className="w-full h-full flex flex-col gap-3 min-h-0">
@@ -135,16 +164,18 @@ function Dashboard() {
             <div className="h-45">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={orgChartData} barCategoryGap={40}>
-                  <XAxis dataKey="name" />
+                  <XAxis dataKey="name" tick={<CustomXAxisTick />} />
                   <YAxis />
                   <Tooltip />
 
-                  <Bar
-                    dataKey="users"
-                    fill="#287af7"
-                    radius={[6, 6, 0, 0]}
-                    barSize={20}
-                  />
+                  <Bar dataKey="users" radius={[6, 6, 0, 0]} barSize={20}>
+                    {orgChartData.map((_, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={BAR_COLORS[index % BAR_COLORS.length]}
+                      />
+                    ))}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>

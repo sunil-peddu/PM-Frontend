@@ -84,8 +84,18 @@ function Dashboard() {
     );
   }
 
+  const TASK_COLORS = {
+  todo: "#6EA8FE",        // Soft Blue
+  inProgress: "#A78BFA",  // Soft Lavender
+  done: "#6FCF97",        // Soft Mint Green
+
+  todoBg: "#EEF5FF",
+  inProgressBg: "#F4F0FF",
+  doneBg: "#EDF9F2",
+};
+
   return (
-    <main className="w-full h-full flex flex-col gap-4 min-h-0 overflow-hidden">
+    <main className="w-full h-full flex flex-col gap-4 min-h-0 overflow-hidden ">
       {/* Row 1 */}
       <div className="grid grid-cols-3 gap-4 h-full max-h-80">
         {/* Upcoming Tasks */}
@@ -95,7 +105,7 @@ function Dashboard() {
             {dashboard?.upcoming_tasks?.map((task) => (
               <div
                 key={task.task_id}
-                className={`rounded-3xl p-4 min-h-55 flex flex-col justify-between ${
+                className={`rounded-3xl p-3 min-h-55 flex flex-col justify-between ${
                   cardColors[task.priority] || "bg-gray-100"
                 }`}
               >
@@ -155,7 +165,7 @@ function Dashboard() {
                     </div>
 
                     <span
-                      className={`text-xs px-2 py-1 rounded-full capitalize ${
+                      className={`text-[10.5px] px-2 py-0.5 rounded-full capitalize  whitespace-nowrap ${
                         task.status === "done"
                           ? "bg-green-100 text-green-700"
                           : task.status === "in_progress"
@@ -193,7 +203,10 @@ function Dashboard() {
                 <div className="space-y-5">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#38a0f5]" />
+                      <span
+                        className="w-2.5 h-2.5 rounded-full"
+                        style={{ backgroundColor: TASK_COLORS.todo }}
+                      />
                       <p className="text-xs text-gray-500">Todo</p>
                     </div>
 
@@ -204,7 +217,10 @@ function Dashboard() {
 
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#7cc7fa]" />
+                      <span
+                        className="w-2.5 h-2.5 rounded-full"
+                        style={{ backgroundColor: TASK_COLORS.inProgress }}
+                      />
                       <p className="text-xs text-gray-500">In Progress</p>
                     </div>
 
@@ -215,7 +231,10 @@ function Dashboard() {
 
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#d8efff]" />
+                      <span
+                        className="w-2.5 h-2.5 rounded-full"
+                        style={{ backgroundColor: TASK_COLORS.done }}
+                      />
                       <p className="text-xs text-gray-500">Done</p>
                     </div>
 
@@ -232,10 +251,10 @@ function Dashboard() {
                     className="absolute w-48 h-48 rounded-full"
                     style={{
                       background: `conic-gradient(
-                from -90deg,
-                #38a0f5 0% ${todoPercent}%,
-                #e8f4fd ${todoPercent}% 100%
-              )`,
+  from -90deg,
+  ${TASK_COLORS.todo} 0% ${todoPercent}%,
+  ${TASK_COLORS.todoBg} ${todoPercent}% 100%
+)`,
                       mask: "radial-gradient(circle, transparent 58%, black 59%, black 82%, transparent 83%)",
                       WebkitMask:
                         "radial-gradient(circle, transparent 58%, black 59%, black 82%, transparent 83%)",
@@ -247,10 +266,10 @@ function Dashboard() {
                     className="absolute w-36 h-36 rounded-full"
                     style={{
                       background: `conic-gradient(
-                from 20deg,
-                #7cc7fa 0% ${inProgressPercent}%,
-                #eef7fe ${inProgressPercent}% 100%
-              )`,
+  from 20deg,
+  ${TASK_COLORS.inProgress} 0% ${inProgressPercent}%,
+  ${TASK_COLORS.inProgressBg} ${inProgressPercent}% 100%
+)`,
                       mask: "radial-gradient(circle, transparent 55%, black 56%, black 80%, transparent 81%)",
                       WebkitMask:
                         "radial-gradient(circle, transparent 55%, black 56%, black 80%, transparent 81%)",
@@ -262,10 +281,10 @@ function Dashboard() {
                     className="absolute w-24 h-24 rounded-full"
                     style={{
                       background: `conic-gradient(
-                from 120deg,
-                #b9e3fd 0% ${donePercent}%,
-                #f3f9fe ${donePercent}% 100%
-              )`,
+  from 120deg,
+  ${TASK_COLORS.done} 0% ${donePercent}%,
+  ${TASK_COLORS.doneBg} ${donePercent}% 100%
+)`,
                       mask: "radial-gradient(circle, transparent 52%, black 53%, black 78%, transparent 79%)",
                       WebkitMask:
                         "radial-gradient(circle, transparent 52%, black 53%, black 78%, transparent 79%)",
@@ -279,7 +298,7 @@ function Dashboard() {
       </div>
       {/* row2 */}
       <div className="grid grid-cols-3 gap-4 flex-1 overflow-hidden">
-        <div className="border border-white/50 bg-white/50 backdrop-blur-lg rounded-xl overflow-y-auto p-4">
+        <div className="border border-white/50 bg-white/50 backdrop-blur-lg rounded-xl overflow-y-auto p-2">
           <h2 className="text-lg font-semibold pb-2">Recently Completed</h2>
           <div className="space-y-3">
             {dashboard?.recently_completed?.length > 0 ? (
@@ -328,7 +347,7 @@ function Dashboard() {
           </div>
         </div>
         {/* box2 */}
-        <div className=" border border-white/50 bg-white/50 backdrop-blur-lg rounded-xl overflow-y-auto p-4">
+        <div className=" border border-white/50 bg-white/50 backdrop-blur-lg rounded-xl overflow-y-auto p-2">
           <h2 className="text-lg font-semibold mb-4">Priority Breakdown</h2>
 
           <ResponsiveContainer width="100%" height={194}>
@@ -368,7 +387,7 @@ function Dashboard() {
         </div>
 
         {/* box3 */}
-        <div className=" border border-white/50 bg-white/50 backdrop-blur-lg rounded-xl overflow-y-auto p-4">
+        <div className=" border border-white/50 bg-white/50 backdrop-blur-lg rounded-xl overflow-y-auto p-2">
           <h2 className="text-lg font-semibold mb-2">My Projects</h2>
 
           <div className="space-y-4">
