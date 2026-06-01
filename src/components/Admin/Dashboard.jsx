@@ -175,14 +175,14 @@ function Dashboard() {
             {/* Graph */}
             <div className="flex items-end gap-2 h-24 mb-6 overflow-hidden">
               {visibleTaskBars.map((item, index) => {
-                let bg = "bg-[#38a0f5]";
+                let bg = "bg-[#94A3B8]";
 
-                if (item === "todo") bg = "bg-[#b9e3fd]";
-                if (item === "progress") bg = "bg-[#7cc7fa]";
-                if (item === "done") bg = "bg-[#38a0f5]";
-                if (item === "overdue") bg = "bg-[#1e7fd1]";
-                if (item === "other") bg = "bg-[#94a3b8]";
-                if (item === "empty") bg = "bg-[#d8efff]";
+                if (item === "todo") bg = "bg-[#C084FC]"; // Orange
+                if (item === "progress") bg = "bg-[#38BDF8]"; // Cyan
+                if (item === "done") bg = "bg-[#14B8A6]"; // Indigo
+                if (item === "overdue") bg = "bg-[#FB7185]"; // Pink
+                if (item === "other") bg = "bg-[#94A3B8]"; // Slate
+                if (item === "empty") bg = "bg-[#E2E8F0]"; // Light Slate
 
                 return (
                   <div
@@ -200,24 +200,24 @@ function Dashboard() {
             {/* Footer Stats */}
             <div className="grid grid-cols-4 gap-4">
               <div>
-                <p className="text-2xl font-bold text-[#b9e3fd]">{todoTasks}</p>
+                <p className="text-2xl font-bold text-[#C084FC]">{todoTasks}</p>
                 <p className="text-sm text-gray-500">Todo Tasks</p>
               </div>
 
               <div>
-                <p className="text-2xl font-bold text-[#7cc7fa]">
+                <p className="text-2xl font-bold text-[#38BDF8]">
                   {inProgressTasks}
                 </p>
                 <p className="text-sm text-gray-500">In Progress</p>
               </div>
 
               <div>
-                <p className="text-2xl font-bold text-[#38a0f5]">{doneTasks}</p>
+                <p className="text-2xl font-bold text-[#14B8A6]">{doneTasks}</p>
                 <p className="text-sm text-gray-500">Done Tasks</p>
               </div>
 
               <div>
-                <p className="text-2xl font-bold text-[#1e7fd1]">
+                <p className="text-2xl font-bold text-[#FB7185]">
                   {overdueTasks}
                 </p>
                 <p className="text-sm text-gray-500">Overdue</p>
