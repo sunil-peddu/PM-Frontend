@@ -11,7 +11,10 @@ A multi-tenant task management platform built with React.js 18 and Tailwind CSS.
 ---
 
 ## Screenshots
+<img width="1280" height="600" alt="image" src="https://github.com/user-attachments/assets/1471687a-8946-4292-9f0f-bf41ff1f9cee" />
+<img width="1280" height="600" alt="image" src="https://github.com/user-attachments/assets/4ff4f6d9-b546-4198-b3c6-ed11fd03f1ac" />
 <img width="1280" height="600" alt="image" src="https://github.com/user-attachments/assets/395eb412-fcfb-477b-a3cd-6d2cb3f48d0a" />
+<img width="1280" height="600" alt="image" src="https://github.com/user-attachments/assets/6630369a-c033-49d3-a129-8d4923ce382b" />
 
 
 ---
